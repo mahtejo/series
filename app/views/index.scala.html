@@ -30,98 +30,98 @@
                         </header>
                         <div class="panel-body">
                             Clique no nome da série que você deseja marcar como assistida.<br><br>
-                        @for(serie <- series){
-                            @if(!serie.isAssistindo){
-                                <div id="accordion" class="panel-group">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading" >
-                                            <h4 class="panel-title">
-                                                @serie.getNome
-                                                <form class="pull-right" action="@routes.Application.assistirSerie(serie.getId)" method="post">
-                                                    <button class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
-                                                </form>
-                                            </h4><br/>
-                                        </div>
-                                        <div class="panel-body">
+                            @for(serie <- series){
+                                @if(!serie.isAssistindo){
+                                    <div id="accordion" class="panel-group">
+                                        <div class="panel panel-info">
+                                            <div class="panel-heading" >
+                                                <h4 class="panel-title">
+                                                    @serie.getNome
+                                                    <form class="pull-right" action="@routes.Application.assistirSerie(serie.getId)" method="post">
+                                                        <button class="btn btn-success"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
+                                                    </form>
+                                                </h4><br/>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
+                                }
                             }
-                        }
                         </div>
 
 
                     </section>  </div>
 
-            <div class="col-md-6">
+                <div class="col-md-6">
                     <section class="panel panel-success">
                         <header class="panel-heading">
                             <h2 class="panel-title">Séries Assistidas</h2>
                         </header>
-                    <div class="panel-body">
+                        <div class="panel-body">
+                            Clique no nome da série, em seguida selecione a temporada e depois clique no "V" para marcar como assistido aquele episódio.<br><br>
+                        @for(serie <- series) {
+                            @if(serie.isAssistindo) {
+                                <div id="accordion" class="panel-group">
+                                    <div class="panel panel-success">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#accordion" href="#@serie.getNome.split(" ")@serie.getId">@serie.getNome</a>
+                                            </h4>
+                                            <br/>
+                                        </div>
+                                        <div id="@serie.getNome.split(" ")@serie.getId" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                            @for(temporada <- serie.getTemporadas){
+                                                <div id="accordion" class="panel-group">
+                                                    <div class="panel panel-success">
+                                                        <div class="panel-heading">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#@temporada.getId@temporada.getSerie.getNome.split(" ")">@temporada.getNumero Temporada - @temporada.getQuantidadeDeEpisodiosAssistidos/@temporada.getTotalDeEpisodios</a>
+                                                            </h4>
+                                                            <br/>
+                                                        </div>
+                                                        <div id="@temporada.getId@temporada.getSerie.getNome.split(" ")" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <ol>
+                                                                @for(episodio <- temporada.getEpisodios){
+                                                                    @if(episodio.isAssistido){
+                                                                        <li>
+                                                                            <del>@episodio.getNome</del>
+                                                                        </li>
+                                                                        <br/>
+                                                                    } else {
+                                                                        <li>
+                                                                            @if(temporada.ehOProximoASerAssistido(episodio.getId)){
+                                                                                @episodio.getNome (PRÓXIMO)
+                                                                            } else {
+                                                                                @episodio.getNome
+                                                                            }
 
-                    @for(serie <- series) {
-                        @while(!serie.isAssistindo){
-                            Você ainda não assistiu a nenhuma série.<br>
-                        }
-                        @if(serie.isAssistindo) {
-                            <div id="accordion" class="panel-group">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading" >
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-parent="#accordion" href="#@serie.getNome.split(" ") @serie.getId">@serie.getNome</a>
-                                        </h4>
-                                        <br/>
-                                    </div>
-                                    <div id="@serie.getNome.split(" ") @serie.getId" class="panel-collapse collapse">
-                                        <div class="panel-body">
-                                        @for(temporada <- serie.getTemporadas) {
-                                            <div id="accordion" class="panel-group">
-                                                <div class="panel panel-default">
-                                                    <div class="panel-heading">
-                                                        <h4 class="panel-title">
-                                                            <a data-toggle="collapse" data-parent="#accordion" href="#@temporada.getId @temporada.getSerie.getNome.split(" ")">@temporada.getNumero
-                                                                Temporada - @temporada.getQuantidadeDeEpisodiosAssistidos/@temporada.getTotalDeEpisodios</a>
-                                                        </h4>
-                                                        <br/>
-                                                    </div>
-                                                    <div id="@temporada.getId @temporada.getSerie.getNome.split(" ")" class="panel-collapse collapse">
-                                                        <div class="panel-body">
-
-                                                            @for(episodio <- temporada.getEpisodios) {
-                                                                @if(episodio.isAssistido) {
-                                                                    <br>
-                                                                        <del> <span class="glyphicon glyphicon-play" aria-hidden="true"></span>@episodio.getNome</del>
-
-                                                                    <br/>
-                                                                } else {
-                                                                    <br>
-                                                                        @if(temporada.ehOProximoASerAssistido(episodio.getId)) {
-                                                                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>@episodio.getNome (PRÓXIMO)
-                                                                        } else {
-                                                                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>@episodio.getNome
-                                                                        }
-                                                                        <form class="pull-right" action="@routes.Application.assistirEpisodio(episodio.getId)" method="post" >
-                                                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                                                                        </form>
-                                                                    <br/>
+                                                                            <form class="pull-right" action="@routes.Application.assistirEpisodio(episodio.getId)" method="post" >
+                                                                                <button class="btn btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+                                                                            </form>
+                                                                        </li>
+                                                                        <br/>
+                                                                    }
                                                                 }
-                                                            }
+                                                                </ol>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            }
                                             </div>
-                                        }
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        }
-                        }
 
-                    </section></div></div>
+                        }
+                        }
+                        </div>
+
+
+
+                </section></div></div>
 
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
             <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
